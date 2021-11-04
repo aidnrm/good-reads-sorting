@@ -1,4 +1,5 @@
 #include <cmath>
+#include "bookData.h"
 #include <iostream>
 #include <vector>
 using namespace std;
@@ -107,6 +108,10 @@ void selectionSort(vector<Comparable> vec) {
         printVec(vec);
     }
 }
+
+// TODO: Sort on a different field (bookTitle) using a stable selection sort algorithm.
+    // TODO: Make a copy of the selection sort function and take out the template part
+    // TODO: Create a getter for bookTitle to compare and return the comparable.
 
 template<typename Comparable>
 void selectionSortStable(vector<Comparable> vec) {

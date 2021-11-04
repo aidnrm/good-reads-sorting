@@ -6,6 +6,7 @@
 #include "QuickSort.h"
 #include "bookData.h"
 #include <vector>
+#include <random>
 #include <chrono> // Used for timer
 using namespace std;
 int main() {
@@ -14,6 +15,7 @@ int main() {
     loadFromFile("../books.csv", bookDataVec);
 
     bookDataVec.resize(15);
+
     // Start timer to record how long it takes to sort.
     auto BubbleSortTimeBegin = chrono::high_resolution_clock::now();
     // Put vector of bookData into bubble sort.
@@ -39,10 +41,6 @@ int main() {
     heapSort(bookDataVec);
     auto HeapSortTimeEnd = chrono::high_resolution_clock::now();
     auto HeapSortDuration = HeapSortTimeEnd - HeapSortTimeBegin;
-
-    // TODO: Sort on a different field (bookTitle) using a stable selection sort algorithm.
-        // TODO: Make a copy of the selection sort function and take out the template part
-        // TODO: Create a getter for bookTitle to compare and return the comparable.
 
 
 

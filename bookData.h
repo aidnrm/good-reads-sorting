@@ -108,6 +108,32 @@ public:
         bookID = bookId;
     }
 
+    bool getBookTitleComparable(bookData leftBookTitle, bookData rightBookTitle){
+        if (leftBookTitle > rightBookTitle)
+        {
+            return leftBookTitle.getTitle() < rightBookTitle.getTitle();
+        }
+
+        if(leftBookTitle < rightBookTitle)
+        {
+            return leftBookTitle.getTitle() < rightBookTitle.getTitle();
+        }
+
+        if(leftBookTitle <= rightBookTitle)
+        {
+            return leftBookTitle.getTitle() <= rightBookTitle.getTitle();
+        }
+        if(leftBookTitle >= rightBookTitle)
+        {
+            return leftBookTitle.getTitle() >= rightBookTitle.getTitle();
+        }
+        if(leftBookTitle == rightBookTitle)
+        {
+            return true;
+        }
+        return false;
+
+    }
     /*
      * Overloaded Operators
      * friend declaration allows me to access private fields from classes
@@ -126,28 +152,25 @@ public:
 
     // Overload operators for <, >, <=, >= and ==.
     friend bool operator>=(bookData greaterEqual, bookData lessEqual){
-        return greaterEqual.getBookId() >= lessEqual.getBookId(),
-        greaterEqual.getTitle() >= lessEqual.getTitle();
+        return greaterEqual.getBookId() >= lessEqual.getBookId();
 
     }
     friend bool operator <=(bookData lessEqual, bookData greaterEqual){
-        return lessEqual.getBookId() <= greaterEqual.getBookId(),
-        lessEqual.getTitle() <= greaterEqual.getTitle();
+        return lessEqual.getBookId() <= greaterEqual.getBookId();
     }
     friend bool operator>(bookData greater, bookData less){
-        return greater.getBookId() > less.getBookId(),
-        greater.getTitle() > less.getTitle();
+        return greater.getBookId() > less.getBookId();
     }
     friend bool operator<(bookData less, bookData greater){
-        return less.getBookId() < greater.getBookId(),
-        less.getTitle() < greater.getTitle();
+        return less.getBookId() < greater.getBookId();
     }
     bool operator == (bookData& other){
-        if(getBookId() == other.getBookId() || getTitle() == other.getTitle()){
+        if(getBookId() == other.getBookId()){
             return true;
         }
         return false;
     };
+
 };
 
 /**
