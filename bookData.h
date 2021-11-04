@@ -107,33 +107,7 @@ public:
     void setBookId(int bookId) {
         bookID = bookId;
     }
-
-    bool getBookTitleComparable(bookData leftBookTitle, bookData rightBookTitle){
-        if (leftBookTitle > rightBookTitle)
-        {
-            return leftBookTitle.getTitle() < rightBookTitle.getTitle();
-        }
-
-        if(leftBookTitle < rightBookTitle)
-        {
-            return leftBookTitle.getTitle() < rightBookTitle.getTitle();
-        }
-
-        if(leftBookTitle <= rightBookTitle)
-        {
-            return leftBookTitle.getTitle() <= rightBookTitle.getTitle();
-        }
-        if(leftBookTitle >= rightBookTitle)
-        {
-            return leftBookTitle.getTitle() >= rightBookTitle.getTitle();
-        }
-        if(leftBookTitle == rightBookTitle)
-        {
-            return true;
-        }
-        return false;
-
-    }
+    
     /*
      * Overloaded Operators
      * friend declaration allows me to access private fields from classes
@@ -172,6 +146,7 @@ public:
     };
 
 };
+
 
 /**
  * function retrieves data from file and puts it into vector

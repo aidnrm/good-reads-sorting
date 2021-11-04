@@ -25,10 +25,16 @@ int main() {
     auto BubbleSortDuration = BubbleSortTimeEnd - BubbleSortTimeBegin;
 
     auto SelectionSortTimeBegin = chrono::high_resolution_clock::now();
-    // Put vector of bookData into bubble sort.
+    // Put vector of bookData into selection sort.
     selectionSort(bookDataVec);
     auto SelectionSortTimeEnd = chrono::high_resolution_clock::now();
     auto SelectionSortDuration = SelectionSortTimeEnd - SelectionSortTimeBegin;
+
+    auto SelectionSortStableTimeBegin = chrono::high_resolution_clock::now();
+    // Put vector of bookData into selection sort.
+    selectionSortStable(bookDataVec);
+    auto SelectionSortStableTimeEnd = chrono::high_resolution_clock::now();
+    auto SelectionSortStableDuration = SelectionSortStableTimeEnd - SelectionSortStableTimeBegin;
 
     auto QuickSortTimeBegin = chrono::high_resolution_clock::now();
     // Put vector of bookData into unstable quick sort.
@@ -43,18 +49,23 @@ int main() {
     auto HeapSortDuration = HeapSortTimeEnd - HeapSortTimeBegin;
 
 
-
     // Print the time it took to sort each algorithm.
     // Bubble Sort time.
     auto i_millis = chrono::duration_cast<chrono::milliseconds>(BubbleSortDuration);
     auto f_secs = chrono::duration_cast<chrono::duration<float>>(BubbleSortDuration);
     cout << "Bubble Sort time elapsed: ", i_millis.count() << '/n';
     cout << f_secs.count() << endl;
-    // Insertion Sort time.
+    // Selection Sort time.
     auto i_millis1 = chrono::duration_cast<chrono::milliseconds>(SelectionSortDuration);
     auto f_secs1 = chrono::duration_cast<chrono::duration<float>>(SelectionSortDuration);
     cout << "Selection Sort time elapsed: ", i_millis1.count() << '/n';
     cout << f_secs1.count() << endl;
+
+    // Selection Sort Stable time.
+    auto i_millis11 = chrono::duration_cast<chrono::milliseconds>(SelectionSortStableDuration);
+    auto f_secs111 = chrono::duration_cast<chrono::duration<float>>(SelectionSortStableDuration);
+    cout << "Selection Sort Stable time elapsed: ", i_millis1.count() << '/n';
+    cout << f_secs111.count() << endl;
     // Quick Sort time.
     auto i_millis2 = chrono::duration_cast<chrono::milliseconds>(QuickSortDuration);
     auto f_secs2 = chrono::duration_cast<chrono::duration<float>>(QuickSortDuration);

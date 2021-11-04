@@ -109,19 +109,15 @@ void selectionSort(vector<Comparable> vec) {
     }
 }
 
-// TODO: Sort on a different field (bookTitle) using a stable selection sort algorithm.
-    // TODO: Make a copy of the selection sort function and take out the template part
-    // TODO: Create a getter for bookTitle to compare and return the comparable.
-
 template<typename Comparable>
-void selectionSortStable(vector<Comparable> vec) {
+void selectionSortGetTitle(vector<Comparable> vec) {
     int swapIndex, i, minIndex;
     Comparable temp;
     for (swapIndex = 0; swapIndex < vec.size() - 1; ++swapIndex) {
         // Loop through vector starting at swapIndex and keep track of min
         minIndex = swapIndex;
         for (i = swapIndex + 1; i < vec.size(); ++i) {
-            if (vec[i] < vec[minIndex]) {
+            if (vec[i].getTitle() < vec[minIndex].getTitle()) {
                 minIndex = i;
             }
         }
