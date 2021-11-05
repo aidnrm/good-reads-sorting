@@ -1,9 +1,16 @@
 #include <cmath>
 #include "bookData.h"
 #include <iostream>
+
 #include <vector>
 using namespace std;
 
+void readsAndWrites(int reads, int writes){
+    cout << "Number of reads: ";
+    cout << reads << endl;
+    cout << "Number of writes: ";
+    cout << writes << endl;
+}
 template<typename Comparable>
 void printVec(const vector<Comparable> &v) {
     for (int i = 0; i < v.size(); ++i) {
@@ -47,16 +54,18 @@ vector<Comparable> heapSort(vector<Comparable> items) {
     int heapReads = 0; // Count the number of times you use a Comparable object.
     int heapWrites = 0; // Count the number of times you assign into a Comparable object.
     int i, j, child = 0;
-    Comparable temp, tmp;
+    Comparable temp, tmp; //TODO: Does this count as a read?
     // build the heap (with max value at root)
     ++heapReads; // reading information from items
     ++heapWrites; // writing information to i
-    for (i = items.size() / 2 - 1; i >= 0; --i) {
+    for (i = items.size() / 2 - 1; i >= 0; --i) { // TODO: Does the item size count as a read?
+        heapReads = 3 + heapReads; // //TODO: Does this count as a read?
         percolateDown(items, i, items.size(), child, tmp);
     }
-    printVec(items);
+    ++heapReads; // read items
+    printVec(items); //TODO: Does this count as a read?
     // keep deleting the max
-    ++heapReads; // reading information from items
+    ++heapReads; // reading items.size()
     ++heapWrites; // writing information to j
     for (j = items.size() - 1; j > 0; --j) {
         heapReads = heapReads + 3; // reads items at index 0, items at index j and temp
@@ -67,10 +76,15 @@ vector<Comparable> heapSort(vector<Comparable> items) {
         items[j] = temp;
 
         // make it into a heap again
+        heapReads = heapReads + 3; // TODO: Does this count as a read?
         percolateDown(items, 0, j, child, tmp);
+        ++heapReads; // TODO: Does this count as a read?
         printVec(items);
+
     }
+    readsAndWrites(heapReads, heapWrites);
     return items;
+
 }
 
 template<typename Comparable>
@@ -79,10 +93,9 @@ void bubbleSort(vector<Comparable> vec) {
     int bubbleWrites = 0;
     bool haveSwapped = true;
 
-    ++bubbleReads; // reads the vec size
+    ++bubbleReads; // TODO: Does the vec.size() count as a read?
     ++bubbleWrites; // writes to max index
     int maxIndex = vec.size(), i;
-    //TODO: Figure out if I read or write here.
     Comparable temp;
     while (haveSwapped) {
         haveSwapped = false;
@@ -100,50 +113,69 @@ void bubbleSort(vector<Comparable> vec) {
                 haveSwapped = true;
             }
         }
+        // TODO: Read?
         printVec(vec);
+
         // Update maxIndex
+        ++bubbleReads; // reads maxIndex
+        ++bubbleWrites; // writes the new maxIndex
         --maxIndex;
     }
 }
 
 template<typename Comparable>
 void selectionSort(vector<Comparable> vec) {
+    int selectionSortReads = 0;
+    int selectionSortWrites = 0;
     int swapIndex, i, minIndex;
     Comparable temp;
+    ++selectionSortReads; // reads vec.size()
     for (swapIndex = 0; swapIndex < vec.size() - 1; ++swapIndex) {
         // Loop through vector starting at swapIndex and keep track of min
         minIndex = swapIndex;
+        ++selectionSortReads; // reads vec.size()
         for (i = swapIndex + 1; i < vec.size(); ++i) {
+            selectionSortReads = selectionSortReads + 2; // reads the vec[i] and vec[minIndex].
             if (vec[i] < vec[minIndex]) {
                 minIndex = i;
             }
         }
+        selectionSortReads = selectionSortReads + 3; // reads vec[swapIndex], vec[minIndex], temp
+        selectionSortWrites = selectionSortWrites + 3; // reads temp, vec[swapIndex], vec[minIndex]
         // Swap min value into swapIndex spot in vector
         temp = vec[swapIndex];
         vec[swapIndex] = vec[minIndex];
         vec[minIndex] = temp;
-        printVec(vec);
+        printVec(vec); //TODO: Does this count?
+
     }
 }
 
 // stable selection sort
 template<typename Comparable>
 void selectionSortGetTitle(vector<Comparable> vec) {
+    int stableSelectionSortReads = 0;
+    int stableSelectionSortWrites = 0;
     int swapIndex, i, minIndex;
-    Comparable temp;
+    Comparable temp; // TODO: Does this temp count?
+    ++stableSelectionSortReads; // reads vec.size()
     for (swapIndex = 0; swapIndex < vec.size() - 1; ++swapIndex) {
         // Loop through vector starting at swapIndex and keep track of min
         minIndex = swapIndex;
+        ++stableSelectionSortReads; // reads the vec.size()
         for (i = swapIndex + 1; i < vec.size(); ++i) {
-            if (vec[i].getTitle() < vec[minIndex].getTitle()) {
+            stableSelectionSortReads = 2 + stableSelectionSortReads; // reads vec[i] and vec[minIndex]
+            if (vec[i].getTitle() < vec[minIndex].getTitle()) { // Compares the getTitle field instead of bookID.
                 minIndex = i;
             }
         }
         // Swap min value into swapIndex spot in vector
+        stableSelectionSortReads = 3 + stableSelectionSortReads; // read vec[swapIndex], vec[minIndex], temp.
+        stableSelectionSortWrites = 3 + stableSelectionSortWrites; // write temp, vec[swapIndex], vec[minIndex].
         temp = vec[swapIndex];
         vec[swapIndex] = vec[minIndex];
         vec[minIndex] = temp;
-        printVec(vec);
+        printVec(vec); // TODO: AM I reading into the printVec function?
     }
 }
 
@@ -152,17 +184,24 @@ void selectionSortGetTitle(vector<Comparable> vec) {
 
 template<typename Comparable>
 void quickSortUnstableRec(vector<Comparable> &vec, int startIndex, int endIndex) {
+    int quickSortRead = 0;
+    int quickSortWrite = 0;
     if (endIndex <= startIndex) {
         // There is only one element left. Nothing to do.
         return;
     }
+    ++quickSortWrite; // write to the partition
+    ++quickSortRead; // read the vec starting index
     Comparable partition = vec[startIndex];
-    Comparable temp;
+    Comparable temp; // TODO: Does this update the read?
     int i;
     int largerElementIndex = startIndex + 1;
     for (i = startIndex; i <= endIndex; ++i) {
+        quickSortRead = quickSortRead + 2; // reads the vec[i] and the partition.
         if (vec[i] < partition) {
             // Swap the element with the one at largerElementIndex to keep smaller elements grouped
+            quickSortRead = 3 + quickSortRead; // reads the vec[i], vec[largerElementIndex], temp
+            quickSortWrite = 3 + quickSortWrite; // write to the temp, vec[i], vec[largerElementIndex].
             temp = vec[i];
             vec[i] = vec[largerElementIndex];
             vec[largerElementIndex] = temp;
@@ -170,11 +209,14 @@ void quickSortUnstableRec(vector<Comparable> &vec, int startIndex, int endIndex)
             ++largerElementIndex;
         }
     }
+    quickSortRead = 2 + quickSortRead; // reads the vec[largerElementIndex - 1] and partition
+    quickSortWrite = 2 + quickSortWrite; // writes to the vec[startIndex] and vec[largerElementIndex - 1]
     vec[startIndex] = vec[largerElementIndex - 1];
     vec[largerElementIndex - 1] = partition;
 
-    printVec(vec);
+    printVec(vec); // TODO: Update the read?
 
+    // TODO: Update the read for the recursive calls?
     // Recursive call for less-than-partition side
     quickSortUnstableRec(vec, startIndex, largerElementIndex - 2);
     // Recursive call for greater-than-or-equal-to-partition side
@@ -184,45 +226,4 @@ void quickSortUnstableRec(vector<Comparable> &vec, int startIndex, int endIndex)
 template<typename Comparable>
 void quickSortUnstable(vector<Comparable> vec) {
     quickSortUnstableRec(vec, 0, vec.size() - 1);
-}
-
-template<typename Comparable>
-void quickSortStableRec(vector<Comparable> &vec) {
-    // Recursive base case
-    if (vec.size() <= 1) {
-        return;
-    }
-    // Choose a partition element
-    Comparable partition = vec[0];
-    vector<Comparable> smaller, equal, larger;
-    // Loop through vec and populate smaller, equal, larger
-    int i;
-    for (i = 0; i < vec.size(); ++i) {
-        if (vec[i] < partition) {
-            smaller.push_back(vec[i]);
-        } else if (vec[i] == partition) {
-            equal.push_back(vec[i]);
-        } else {
-            larger.push_back(vec[i]);
-        }
-    }
-    // Recursive calls
-    quickSortStableRec(smaller);
-    quickSortStableRec(larger);
-    // Copy everything back into vec
-    for (i = 0; i < vec.size(); ++i) {
-        if (i < smaller.size()) {
-            vec[i] = smaller[i];
-        } else if (i < smaller.size() + equal.size()) {
-            vec[i] = equal[i - smaller.size()];
-        } else {
-            vec[i] = larger[i - smaller.size() - equal.size()];
-        }
-    }
-    printVec(vec);
-}
-
-template<typename Comparable>
-void quickSortStable(vector<Comparable> vec) {
-    quickSortStableRec(vec);
 }

@@ -107,7 +107,6 @@ public:
     void setBookId(int bookId) {
         bookID = bookId;
     }
-    
     /*
      * Overloaded Operators
      * friend declaration allows me to access private fields from classes
