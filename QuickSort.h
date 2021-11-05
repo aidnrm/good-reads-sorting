@@ -1,15 +1,18 @@
 #include <cmath>
 #include "bookData.h"
 #include <iostream>
-
+#include <fstream>
 #include <vector>
 using namespace std;
 
 void readsAndWrites(int reads, int writes){
-    cout << "Number of reads: ";
-    cout << reads << endl;
-    cout << "Number of writes: ";
-    cout << writes << endl;
+    // Create an output filestream obj
+    ofstream of("/..readWriteData.csv");
+    of << "Number of reads: ";
+    of << reads << endl;
+    of << "Number of writes: ";
+    of << writes << endl;
+    of.close();
 }
 template<typename Comparable>
 void printVec(const vector<Comparable> &v) {
@@ -51,6 +54,7 @@ void percolateDown(vector<Comparable> &items, int i, int n, int child, Comparabl
 
 template <typename Comparable>
 vector<Comparable> heapSort(vector<Comparable> items) {
+
     int heapReads = 0; // Count the number of times you use a Comparable object.
     int heapWrites = 0; // Count the number of times you assign into a Comparable object.
     int i, j, child = 0;
@@ -79,8 +83,8 @@ vector<Comparable> heapSort(vector<Comparable> items) {
         heapReads = heapReads + 3; // TODO: Does this count as a read?
         percolateDown(items, 0, j, child, tmp);
         ++heapReads; // TODO: Does this count as a read?
-        printVec(items);
-
+        // printVec(items);
+        readsAndWrites(heapReads, heapWrites);
     }
     readsAndWrites(heapReads, heapWrites);
     return items;
