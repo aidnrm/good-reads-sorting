@@ -32,7 +32,7 @@ int main() {
 
     auto SelectionSortStableTimeBegin = chrono::high_resolution_clock::now();
     // Put vector of bookData into selection sort.
-    selectionSortStable(bookDataVec);
+    selectionSortGetTitle(bookDataVec);
     auto SelectionSortStableTimeEnd = chrono::high_resolution_clock::now();
     auto SelectionSortStableDuration = SelectionSortStableTimeEnd - SelectionSortStableTimeBegin;
 
@@ -64,12 +64,12 @@ int main() {
     // Selection Sort Stable time.
     auto i_millis11 = chrono::duration_cast<chrono::milliseconds>(SelectionSortStableDuration);
     auto f_secs111 = chrono::duration_cast<chrono::duration<float>>(SelectionSortStableDuration);
-    cout << "Selection Sort Stable time elapsed: ", i_millis1.count() << '/n';
+    cout << "Stable Selection Sort time elapsed: ", i_millis1.count() << '/n';
     cout << f_secs111.count() << endl;
     // Quick Sort time.
     auto i_millis2 = chrono::duration_cast<chrono::milliseconds>(QuickSortDuration);
     auto f_secs2 = chrono::duration_cast<chrono::duration<float>>(QuickSortDuration);
-    cout << "Unstable Quick Sort time elapsed: ", i_millis2.count() << '/n';
+    cout << "Quick Sort time elapsed: ", i_millis2.count() << '/n';
     cout << f_secs2.count() << endl;
     // Heap Sort time.
     auto i_millis3 = chrono::duration_cast<chrono::milliseconds>(HeapSortDuration);

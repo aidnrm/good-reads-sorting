@@ -44,15 +44,23 @@ void percolateDown(vector<Comparable> &items, int i, int n, int child, Comparabl
 
 template <typename Comparable>
 vector<Comparable> heapSort(vector<Comparable> items) {
+    int heapReads = 0; // Count the number of times you use a Comparable object.
+    int heapWrites = 0; // Count the number of times you assign into a Comparable object.
     int i, j, child = 0;
     Comparable temp, tmp;
     // build the heap (with max value at root)
+    ++heapReads; // reading information from items
+    ++heapWrites; // writing information to i
     for (i = items.size() / 2 - 1; i >= 0; --i) {
         percolateDown(items, i, items.size(), child, tmp);
     }
     printVec(items);
     // keep deleting the max
+    ++heapReads; // reading information from items
+    ++heapWrites; // writing information to j
     for (j = items.size() - 1; j > 0; --j) {
+        heapReads = heapReads + 3; // reads items at index 0, items at index j and temp
+        heapWrites = heapWrites + 3; // writes to temp, items at index 0 and items at index j.
         // swap the maximum out
         temp = items[0];
         items[0] = items[j];
@@ -60,7 +68,6 @@ vector<Comparable> heapSort(vector<Comparable> items) {
 
         // make it into a heap again
         percolateDown(items, 0, j, child, tmp);
-
         printVec(items);
     }
     return items;
@@ -68,14 +75,24 @@ vector<Comparable> heapSort(vector<Comparable> items) {
 
 template<typename Comparable>
 void bubbleSort(vector<Comparable> vec) {
+    int bubbleReads = 0;
+    int bubbleWrites = 0;
     bool haveSwapped = true;
+
+    ++bubbleReads; // reads the vec size
+    ++bubbleWrites; // writes to max index
     int maxIndex = vec.size(), i;
+    //TODO: Figure out if I read or write here.
     Comparable temp;
     while (haveSwapped) {
         haveSwapped = false;
+        ++bubbleReads; // reads the maxIndex
         for (i = 0; i + 1 < maxIndex; ++i) {
             // Compare items at indices i and i+1 and swap if necessary
+            bubbleReads = bubbleReads + 2; // reads both comparable objects in if statement.
             if (vec[i] > vec[i+1]) {
+                bubbleReads = bubbleReads + 3; // read vec[i], vec[i+1], temp
+                bubbleWrites = bubbleWrites + 3; // write temp, vec[i], vec[i+1]
                 temp = vec[i];
                 vec[i] = vec[i+1];
                 vec[i+1] = temp;
@@ -109,6 +126,7 @@ void selectionSort(vector<Comparable> vec) {
     }
 }
 
+// stable selection sort
 template<typename Comparable>
 void selectionSortGetTitle(vector<Comparable> vec) {
     int swapIndex, i, minIndex;
@@ -129,73 +147,8 @@ void selectionSortGetTitle(vector<Comparable> vec) {
     }
 }
 
-template<typename Comparable>
-void insertionSort(vector<Comparable> vec) {
-    int unsortedStartIndex, insertIndex;
-    Comparable toBeInserted;
-    for (unsortedStartIndex = 1; unsortedStartIndex < vec.size(); ++unsortedStartIndex) {
-        toBeInserted = vec[unsortedStartIndex];
-        // Loop to shift over the larger elements
-        insertIndex = unsortedStartIndex - 1;
-        while (insertIndex >= 0 && vec[insertIndex] > toBeInserted) {
-            vec[insertIndex + 1] = vec[insertIndex];
-            --insertIndex;
-        }
-        // Put toBeInserted back into vec
-        vec[insertIndex + 1] = toBeInserted;
-        printVec(vec);
-    }
-}
 
-template<typename Comparable>
-void mergeSortRec(vector<Comparable> &vec, int startIndex, int endIndex) {
-    // Recursive base case
-    if (startIndex == endIndex) {
-        // We have one item. There is nothing to split or sort.
-        return;
-    }
 
-    // Recursive calls
-    int centerIndex = (startIndex + endIndex) / 2;
-    mergeSortRec(vec, startIndex, centerIndex);
-    mergeSortRec(vec, centerIndex + 1, endIndex);
-
-    // Merge
-    vector<Comparable> temp;
-    int leftIndex = startIndex;
-    int rightIndex = centerIndex + 1;
-    while (leftIndex <= centerIndex && rightIndex <= endIndex) {
-        if (vec[leftIndex] <= vec[rightIndex]) {
-            temp.push_back(vec[leftIndex]);
-            ++leftIndex;
-        } else {
-            temp.push_back(vec[rightIndex]);
-            ++rightIndex;
-        }
-    }
-    // At this point, one of the halves has been completely copied into temp but the other hasn't
-    // We need to finish copying everything into temp, so we make loops for each half
-    while (leftIndex <= centerIndex) {
-        temp.push_back(vec[leftIndex]);
-        ++leftIndex;
-    }
-    while (rightIndex <= endIndex) {
-        temp.push_back(vec[rightIndex]);
-        ++rightIndex;
-    }
-    // At this point, all of the items from startIndex to endIndex have been copied into temp
-    // Copy everything from temp back into vec
-    for (int i = 0; i < temp.size(); ++i) {
-        vec[i + startIndex] = temp[i];
-    }
-
-    printVec(vec);
-}
-
-template<typename Comparable>
-void mergeSort(vector<Comparable> vec) {
-    mergeSortRec(vec, 0, vec.size() - 1);
-}
 
 template<typename Comparable>
 void quickSortUnstableRec(vector<Comparable> &vec, int startIndex, int endIndex) {
@@ -272,16 +225,4 @@ void quickSortStableRec(vector<Comparable> &vec) {
 template<typename Comparable>
 void quickSortStable(vector<Comparable> vec) {
     quickSortStableRec(vec);
-}
-
-int main1() {
-    vector<int> numbers = {2, 6, 0, 2, 6, 0 , -5,1, 4};
-    printVec(numbers);
-    // heapSort(numbers);
-    // bubbleSort(numbers);
-    //   selectionSort(numbers);
-    // insertionSort(numbers);
-// mergeSort(numbers);
-    quickSortStable(numbers);
-    return 0;
 }
