@@ -71,6 +71,8 @@ vector<Comparable> heapSort(vector<Comparable> items, int &heapReads, int &heapW
 
 template<typename Comparable>
 void bubbleSort(vector<Comparable> vec, int &bubbleReads, int &bubbleWrites) {
+    bubbleReads = 0;
+    bubbleWrites = 0;
     bool haveSwapped = true;
 
     int maxIndex = vec.size(), i;
@@ -96,6 +98,8 @@ void bubbleSort(vector<Comparable> vec, int &bubbleReads, int &bubbleWrites) {
 // Two sort bubble sort
 template<typename Comparable>
 void bubbleSortGetTitle(vector<Comparable> vec, int &bubbleReadsDifferentField, int &bubbleWritesDifferentField) {
+    bubbleReadsDifferentField = 0;
+    bubbleWritesDifferentField = 0;
     bool haveSwapped = true;
     int maxIndex = vec.size();
     while (haveSwapped) {
@@ -119,6 +123,8 @@ void bubbleSortGetTitle(vector<Comparable> vec, int &bubbleReadsDifferentField, 
 }
 template<typename Comparable>
 void selectionSort(vector<Comparable> vec, int &selectionSortReads, int &selectionSortWrites) {
+    selectionSortReads = 0;
+    selectionSortWrites = 0;
     int swapIndex, i, minIndex;
     Comparable temp;
     for (swapIndex = 0; swapIndex < vec.size() - 1; ++swapIndex) {
