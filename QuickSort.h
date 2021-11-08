@@ -93,7 +93,30 @@ void bubbleSort(vector<Comparable> vec, int &bubbleReads, int &bubbleWrites) {
         --maxIndex;
     }
 }
-
+// Two sort bubble sort
+template<typename Comparable>
+void bubbleSortGetTitle(vector<Comparable> vec, int &bubbleReadsDifferentField, int &bubbleWritesDifferentField) {
+    bool haveSwapped = true;
+    int maxIndex = vec.size();
+    while (haveSwapped) {
+        haveSwapped = false;
+        for (int i = 0; i + 1 < maxIndex; ++i) {
+            // Compare items at indices i and i+1 and swap if necessary
+            bubbleReadsDifferentField = 2 + bubbleReadsDifferentField;
+            if (vec[i].getTitle() > vec[i+1].getTitle()) {
+                bubbleReadsDifferentField = 3 + bubbleReadsDifferentField;
+                bubbleWritesDifferentField = 3 + bubbleWritesDifferentField;
+                Comparable temp = vec[i];
+                vec[i] = vec[i+1];
+                vec[i+1] = temp;
+                // Update haveSwapped
+                haveSwapped = true;
+            }
+        }
+        // Update maxIndex
+        --maxIndex;
+    }
+}
 template<typename Comparable>
 void selectionSort(vector<Comparable> vec, int &selectionSortReads, int &selectionSortWrites) {
     int swapIndex, i, minIndex;
@@ -110,29 +133,6 @@ void selectionSort(vector<Comparable> vec, int &selectionSortReads, int &selecti
         selectionSortReads = selectionSortReads + 3; // reads vec[swapIndex], vec[minIndex], temp
         selectionSortWrites = selectionSortWrites + 3; // reads temp, vec[swapIndex], vec[minIndex]
         // Swap min value into swapIndex spot in vector
-        temp = vec[swapIndex];
-        vec[swapIndex] = vec[minIndex];
-        vec[minIndex] = temp;
-    }
-}
-
-// stable selection sort
-template<typename Comparable>
-void selectionSortStable(vector<Comparable> vec, int &stableSelectionSortReads, int &stableSelectionSortWrites) {
-    int swapIndex, i, minIndex;
-    Comparable temp;
-    for (swapIndex = 0; swapIndex < vec.size() - 1; ++swapIndex) {
-        // Loop through vector starting at swapIndex and keep track of min
-        minIndex = swapIndex;
-        for (i = swapIndex + 1; i < vec.size(); ++i) {
-            stableSelectionSortReads = 2 + stableSelectionSortReads; // reads vec[i] and vec[minIndex]
-            if (vec[i].getTitle() < vec[minIndex].getTitle()) { // Compares the getTitle field instead of bookID.
-                minIndex = i;
-            }
-        }
-        // Swap min value into swapIndex spot in vector
-        stableSelectionSortReads = 3 + stableSelectionSortReads; // read vec[swapIndex], vec[minIndex], temp.
-        stableSelectionSortWrites = 3 + stableSelectionSortWrites; // write temp, vec[swapIndex], vec[minIndex].
         temp = vec[swapIndex];
         vec[swapIndex] = vec[minIndex];
         vec[minIndex] = temp;
@@ -181,43 +181,4 @@ void quickSortUnstable(vector<Comparable> vec, int &quickReads, int &quickWrite)
     quickSortUnstableRec(vec, 0, vec.size() - 1, quickReads, quickWrite);
 }
 
-// Selection sort for two sort comparison.
-template<typename Comparable>
-void selectionSortTwoSort(vector<Comparable> vec) {
 
-    int swapIndex, i, minIndex;
-    Comparable temp;
-    for (swapIndex = 0; swapIndex < vec.size() - 1; ++swapIndex) {
-        // Loop through vector starting at swapIndex and keep track of min
-        minIndex = swapIndex;
-        for (i = swapIndex + 1; i < vec.size(); ++i) {
-            if (vec[i] < vec[minIndex]) {
-                minIndex = i;
-            }
-        }
-        // Swap min value into swapIndex spot in vector
-        temp = vec[swapIndex];
-        vec[swapIndex] = vec[minIndex];
-        vec[minIndex] = temp;
-    }
-}
-
-// Stable selection sort for getTitle field.
-template<typename Comparable>
-void selectionSortStableTwoSort(vector<Comparable> vec) {
-    int swapIndex, i, minIndex;
-    Comparable temp;
-    for (swapIndex = 0; swapIndex < vec.size() - 1; ++swapIndex) {
-        // Loop through vector starting at swapIndex and keep track of min
-        minIndex = swapIndex;
-        for (i = swapIndex + 1; i < vec.size(); ++i) {
-            if (vec[i].getTitle() < vec[minIndex].getTitle()) { // Compares the getTitle field instead of bookID.
-                minIndex = i;
-            }
-        }
-        // Swap min value into swapIndex spot in vector
-        temp = vec[swapIndex];
-        vec[swapIndex] = vec[minIndex];
-        vec[minIndex] = temp;
-    }
-}
