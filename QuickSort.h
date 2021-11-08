@@ -6,50 +6,65 @@
 using namespace std;
 
 void readsAndWrites(int reads, int writes, string name){
+    // Read heap sort data into csv
+    vector<int> heapReads;
+    vector<int> heapWrites;
     if(name == "Heap Sort"){
-        vector<int> heapReads;
-        vector<int> heapWrites;
         heapReads.push_back(reads);
         heapWrites.push_back(writes);
         ofstream heapFile;
-        heapFile.open("heapFile.csv");
-        for(int i = 0; i< heapReads.size(); ++i){
-            cout << heapReads[i] << "," << heapWrites[i] << endl;
+        heapFile.open("heapSortFile.csv", std::ios_base::app);
+
+        for(int i = 0; i < heapReads.size(); ++i){
+            heapFile << heapReads[i] << "," << heapWrites[i] << endl;
         }
         heapFile.close();
     }
 
+    // Read bubble sort data into csv
+    vector<int> bubbleReads;
+    vector<int> bubbleWrites;
     if(name == "Bubble Sort"){
+        bubbleReads.push_back(reads);
+        bubbleWrites.push_back(writes);
         ofstream bubbleFile;
-        bubbleFile.open("bubbleFile.csv");
-        bubbleFile << "Reads" << "," << "Writes" << endl;
-        bubbleFile << reads << "," << writes << endl;
+        bubbleFile.open("bubbleSortFile.csv", std::ios_base::app);
+
+        for(int i = 0; i < bubbleReads.size(); ++i){
+            bubbleFile << bubbleReads[i] << "," << bubbleWrites[i] << endl;
+        }
         bubbleFile.close();
     }
+
+    // Read selection sort data into csv
+    vector<int> selectionReads;
+    vector<int> selectionWrites;
     if(name == "Selection Sort"){
+        selectionReads.push_back(reads);
+        selectionWrites.push_back(writes);
         ofstream selectionSortFile;
-        selectionSortFile.open("selectionSortFile.csv");
-        selectionSortFile << "Reads" << "," << "Writes" << endl;
-        selectionSortFile << reads << "," << writes << endl;
+        selectionSortFile.open("selectionSortFile.csv", std::ios_base::app);
+
+        for(int i = 0; i < selectionReads.size(); ++i){
+            selectionSortFile << selectionReads[i] << "," << selectionWrites[i] << endl;
+        }
         selectionSortFile.close();
     }
+
+    // Read stable selection sort data into csv
+    vector<int> stableSelectionSortReads;
+    vector<int> stableSelectionSortWrites;
     if(name == "Stable Selection Sort"){
+        stableSelectionSortReads.push_back(reads);
+        stableSelectionSortWrites.push_back(writes);
         ofstream stableSelectionSortFile;
-        stableSelectionSortFile.open("stableSelectionSortFile.csv");
-        stableSelectionSortFile << "Reads" << "," << "Writes" << endl;
-        stableSelectionSortFile << reads << "," << writes << endl;
+        stableSelectionSortFile.open("stableSelectionSortFile.csv", std::ios_base::app);
+
+        for(int i = 0; i < stableSelectionSortReads.size(); ++i){
+            stableSelectionSortFile << stableSelectionSortReads[i] << "," << stableSelectionSortWrites[i] << endl;
+        }
         stableSelectionSortFile.close();
     }
-    if(name == "Quick Sort"){
-        ofstream quickSortFile;
-        quickSortFile.open("quickSortFile.csv");
-        quickSortFile << "Reads" << "," << "Writes" << endl;
-        quickSortFile << reads << "," << writes << endl;
-        quickSortFile.close();
-    }
-
-
-
 
 }
 
@@ -228,13 +243,12 @@ void selectionSortStable(vector<Comparable> vec) {
 }
 
 template<typename Comparable>
-void quickSortUnstableRec(vector<Comparable> &vec, int startIndex, int endIndex, int quickReads, int quickWrites) {
+int quickSortUnstableRec(vector<Comparable> &vec, int startIndex, int endIndex, int& quickReads, int& quickWrites) {
     string name = "Quick Sort";
-    quickReads = 0;
-    quickWrites = 0;
+
     if (endIndex <= startIndex) {
         // There is only one element left. Nothing to do.
-        return;
+        return true;
     }
     ++quickWrites; // write to the partition
     ++quickReads; // read the vec starting index
@@ -261,17 +275,74 @@ void quickSortUnstableRec(vector<Comparable> &vec, int startIndex, int endIndex,
     vec[largerElementIndex - 1] = partition;
 
     // printVec(vec); // TODO: Update the read?
-    readsAndWrites(quickReads, quickWrites, name);
+    // readsAndWrites(quickReads, quickWrites, name);
     // TODO: Update the read for the recursive calls?
     // Recursive call for less-than-partition side
     quickSortUnstableRec(vec, startIndex, largerElementIndex - 2, quickReads, quickWrites);
     // Recursive call for greater-than-or-equal-to-partition side
     quickSortUnstableRec(vec, largerElementIndex, endIndex, quickReads, quickWrites);
-
+    return quickReads, quickWrites;
 }
 
 template<typename Comparable>
-void quickSortUnstable(vector<Comparable> vec) {
-    quickSortUnstableRec(vec, 0, vec.size() - 1, 0, 0);
+void quickSortUnstable(vector<Comparable> vec, int& quickReads, int& quickWrite) {
+    quickSortUnstableRec(vec, 0, vec.size() - 1, quickReads, quickWrite);
 }
 
+// Selection sort for two sort comparison.
+template<typename Comparable>
+void selectionSortTwoSort(vector<Comparable> vec) {
+    string name = "Selection Sort";
+    int selectionSortReads = 0;
+    int selectionSortWrites = 0;
+    int swapIndex, i, minIndex;
+    Comparable temp;
+    ++selectionSortReads; // reads vec.size()
+    for (swapIndex = 0; swapIndex < vec.size() - 1; ++swapIndex) {
+        // Loop through vector starting at swapIndex and keep track of min
+        minIndex = swapIndex;
+        ++selectionSortReads; // reads vec.size()
+        for (i = swapIndex + 1; i < vec.size(); ++i) {
+            selectionSortReads = selectionSortReads + 2; // reads the vec[i] and vec[minIndex].
+            if (vec[i] < vec[minIndex]) {
+                minIndex = i;
+            }
+        }
+        selectionSortReads = selectionSortReads + 3; // reads vec[swapIndex], vec[minIndex], temp
+        selectionSortWrites = selectionSortWrites + 3; // reads temp, vec[swapIndex], vec[minIndex]
+        // Swap min value into swapIndex spot in vector
+        temp = vec[swapIndex];
+        vec[swapIndex] = vec[minIndex];
+        vec[minIndex] = temp;
+        // printVec(vec); //TODO: Does this count?
+    }
+}
+
+// Stable selection sort for getTitle field.
+template<typename Comparable>
+void selectionSortStableTwoSort(vector<Comparable> vec) {
+    string name = "Stable Selection Sort";
+    int stableSelectionSortReads = 0;
+    int stableSelectionSortWrites = 0;
+    int swapIndex, i, minIndex;
+    Comparable temp; // TODO: Does this temp count?
+    ++stableSelectionSortReads; // reads vec.size()
+    for (swapIndex = 0; swapIndex < vec.size() - 1; ++swapIndex) {
+        // Loop through vector starting at swapIndex and keep track of min
+        minIndex = swapIndex;
+        ++stableSelectionSortReads; // reads the vec.size()
+        for (i = swapIndex + 1; i < vec.size(); ++i) {
+            stableSelectionSortReads = 2 + stableSelectionSortReads; // reads vec[i] and vec[minIndex]
+            if (vec[i].getTitle() < vec[minIndex].getTitle()) { // Compares the getTitle field instead of bookID.
+                minIndex = i;
+            }
+        }
+        // Swap min value into swapIndex spot in vector
+        stableSelectionSortReads = 3 + stableSelectionSortReads; // read vec[swapIndex], vec[minIndex], temp.
+        stableSelectionSortWrites = 3 + stableSelectionSortWrites; // write temp, vec[swapIndex], vec[minIndex].
+        temp = vec[swapIndex];
+        vec[swapIndex] = vec[minIndex];
+        vec[minIndex] = temp;
+        // printVec(vec); // TODO: AM I reading into the printVec function?
+    }
+}
