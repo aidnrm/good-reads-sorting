@@ -119,7 +119,7 @@ int main() {
     ofstream heapSortFileDouble;
     heapSortFileDouble.open("heapSortFileDouble.csv");
     // Record the number of reads and writes needed to sort a vector that doubles in size.  starting at two and going to 100.
-    for(int vectorSizeDouble = 2; vectorSizeDouble <= 100; vectorSizeDouble+=vectorSizeDouble) {
+    for(int vectorSizeDouble = 2; vectorSizeDouble <= 1000; vectorSizeDouble+=vectorSizeDouble) {
         // Create a bookData vector and load books info
         vector<bookData> bookDataVec;
         loadFromFile("../books.csv", bookDataVec);
