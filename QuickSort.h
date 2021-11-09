@@ -5,17 +5,6 @@
 #include <vector>
 using namespace std;
 
-template<typename Comparable>
-void printVec(const vector<Comparable> &v) {
-    for (int i = 0; i < v.size(); ++i) {
-        if (i != 0) {
-            cout << ", ";
-        }
-        cout << v[i];
-    }
-    cout << endl;
-}
-
 // Helper function for heapSort
 inline int leftChild(int i) {
     return 2 * i + 1;
@@ -25,32 +14,41 @@ inline int leftChild(int i) {
 // i is the index of the value being percolated down
 // n is the number of items in the heap
 template <typename Comparable>
-void percolateDown(vector<Comparable> &items, int i, int n, int child, Comparable tmp) {
+void percolateDown(vector<Comparable> &items, int i, int n, int child, Comparable tmp, int &heapReads, int & heapWrites) {
+    ++heapWrites; // Writes to tmp
+    ++heapReads; // Reads from items
     for(tmp = items[i]; leftChild(i) < n; i = child) {
         child = leftChild(i);
         // choose the child with the larger value
+        heapReads = 2 + heapReads; // Reads items[child] and items[child + 1]
         if (child != n - 1 && items[child] < items[child + 1]) {
             ++child;
         }
+        heapReads = 2 + heapReads; // reads items[child] and tmp
         // if the parent is less than the child, swap them
         if (tmp < items[child]) {
+            ++heapReads; // reads items[child]
+            ++ heapWrites; // writes to items[i]
             items[i] = items[child];
         } else {
             // parent is >= both children. nothing more to do.
             break;
         }
     }
+    ++heapReads; // reads tmp
+    ++heapWrites; // writes to items[i]
     items[i] = tmp;
 }
 
 template <typename Comparable>
 vector<Comparable> heapSort(vector<Comparable> items, int &heapReads, int &heapWrites) {
-
+    heapReads = 0;
+    heapWrites = 0;
     int i, j, child = 0;
     Comparable temp, tmp;
 
     for (i = items.size() / 2 - 1; i >= 0; --i) {
-        percolateDown(items, i, items.size(), child, tmp);
+        percolateDown(items, i, items.size(), child, tmp , heapReads , heapWrites);
     }
     // keep deleting the max
 
@@ -63,7 +61,7 @@ vector<Comparable> heapSort(vector<Comparable> items, int &heapReads, int &heapW
         items[j] = temp;
 
         // make it into a heap again
-        percolateDown(items, 0, j, child, tmp);
+        percolateDown(items, 0, j, child, tmp, heapReads, heapWrites);
     }
     return items;
 
