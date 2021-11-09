@@ -38,7 +38,6 @@ int main() {
     loadFromFile("../books.csv", bookDataVec);
     random_shuffle(bookDataVec.begin(), bookDataVec.end());
     // Record the number of reads and writes needed to sort a vector of size 100, 200, 300, 400, 500, 600, 700, 800, 900, and 1000
-    // TODO: Size of the vector is on x axis, reads or writes on the y axis
     for(vectorSize; vectorSize <= 1000; vectorSize+=100) {
 
         bookDataVec.resize(vectorSize);
