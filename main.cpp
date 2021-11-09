@@ -2,6 +2,7 @@
  * Aiden McCormack
  * CS 124 Section A
  */
+
 #include <iostream>
 #include "QuickSort.h"
 #include "bookData.h"
@@ -23,7 +24,7 @@ int main() {
     // Title int used to put the title at top of each csv.
     int title = 0;
     // initial vector size for sorting
-    int vectorSize = 100;
+    int vectorSize = 1000;
     // Create files to store the number of reads and writes.
     ofstream bubbleSortFile;
     bubbleSortFile.open("bubbleSortFile.csv");
@@ -35,13 +36,15 @@ int main() {
     quickSortFile.open("quickSortFile.csv");
     ofstream heapSortFile;
     heapSortFile.open("heapSortFile.csv");
+
     // Create a bookData vector and load books info
     vector<bookData> bookDataVec;
     loadFromFile("../books.csv", bookDataVec);
     // Shuffle vector for better data, since my comparable obj is ordered from least to greatest.
     random_shuffle(bookDataVec.begin(), bookDataVec.end());
     // Record the number of reads and writes needed to sort a vector of size 100, 200, 300, 400, 500, 600, 700, 800, 900, and 1000
-    for(vectorSize; vectorSize <= 1000; vectorSize+=100) {
+    // TODO: Change for loop to go from 1000 to 100.
+    for(vectorSize; vectorSize >= 100; vectorSize-=100) {
         bookDataVec.resize(vectorSize);
         // Record the reads and writes of bubble sort to csv.
         bubbleSort(bookDataVec, reads, writes);

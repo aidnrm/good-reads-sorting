@@ -20,9 +20,12 @@ void percolateDown(vector<Comparable> &items, int i, int n, int child, Comparabl
     for(tmp = items[i]; leftChild(i) < n; i = child) {
         child = leftChild(i);
         // choose the child with the larger value
-        heapReads = 2 + heapReads; // Reads items[child] and items[child + 1]
-        if (child != n - 1 && items[child] < items[child + 1]) {
+
+        if (child != n - 1){
+            heapReads = 2 + heapReads; // Reads items[child] and items[child + 1]
+            if(items[child] < items[child + 1]) {
             ++child;
+            }
         }
         heapReads = 2 + heapReads; // reads items[child] and tmp
         // if the parent is less than the child, swap them
