@@ -8,100 +8,81 @@
 #include <vector>
 #include <random>
 #include <string>
+#include <algorithm>
 #include <cstdio> // used for the timer
 #include <ctime> // used for the timer
 using namespace std;
 using std::to_string;
 int main() {
-    int bubbleReads = 0; // count the number of reads in each sorting algo
-    int bubbleWrites = 0; // count the number of writes in each sorting algo
-    int selectionReads = 0;
-    int selectionWrites = 0;
-    int stableSelectionReads = 0;
-    int stableSelectionWrites = 0;
+    // Ints for counting the reads and writes of each sorting algorithm.
+    int reads = 0;
+    int writes = 0;
+    // Use different ints for recursive sorting algorithm.
     int quickReads = 0;
     int quickWrites = 0;
-    int heapReads = 0;
-    int heapWrites = 0;
-    int title = 0; // used to put the row title at top of csv
-    int vectorSize = 100; // initial vector size for sorting
-    vector<bookData> bookDataVec; // create a bookData vector
-    loadFromFile("../books.csv", bookDataVec); // load info into vector of bookData type
-    clock_t  start; // used for timing the two sort
-    double duration; // used for timing the two sort
-
-    // Two-sort
-    vector<bookData> twoSortBookData;
-    loadFromFile("../books.csv", twoSortBookData);
-    twoSortBookData.resize(1000); // change the vectors size from 3500 to 1000
-    start = clock(); // start clock
-    selectionSortTwoSort(twoSortBookData); // unstable selection sort
-    duration = (clock() - start) / (double) CLOCKS_PER_SEC;
-    cout << "Duration of unstable selection sort " << duration << " seconds" << '\n'; // record the duration of the sort
-
-    start = clock(); // start clock
-    selectionSortStableTwoSort(twoSortBookData); // stable selection sort on different field.
-    duration = (clock() - start) / (double) CLOCKS_PER_SEC;
-    cout << "Duration of stable selection sort " << duration << " seconds" << '\n'; // record the duration of the sort
-
-    // TODO: The curves of the graphs should mimic the time complexity of the sorting algorithm.
-        //TODO: Quiz 5 sorting tradeoff, radix, hashing.
+    // Title int used to put the title at top of each csv.
+    int title = 0;
+    // initial vector size for sorting
+    int vectorSize = 100;
     // Create files to store the number of reads and writes.
     ofstream bubbleSortFile;
     bubbleSortFile.open("bubbleSortFile.csv");
+    ofstream bubbleSortTwoSortFile;
+    bubbleSortTwoSortFile.open("bubbleSortTwoSort.csv");
     ofstream selectionSortFile;
     selectionSortFile.open("selectionSortFile.csv");
-    ofstream selectionSortStableFile;
-    selectionSortStableFile.open("selectionSortStableFile.csv");
     ofstream quickSortFile;
     quickSortFile.open("quickSortFile.csv");
     ofstream heapSortFile;
     heapSortFile.open("heapSortFile.csv");
+    // Create a bookData vector and load books info
+    vector<bookData> bookDataVec;
+    loadFromFile("../books.csv", bookDataVec);
+    // Shuffle vector for better data, since my comparable obj is ordered from least to greatest.
+    random_shuffle(bookDataVec.begin(), bookDataVec.end());
     // Record the number of reads and writes needed to sort a vector of size 100, 200, 300, 400, 500, 600, 700, 800, 900, and 1000
     for(vectorSize; vectorSize <= 1000; vectorSize+=100) {
-        // Create a bookData vector and load books info
-        vector<bookData> bookDataVec;
-        loadFromFile("../books.csv", bookDataVec);
         bookDataVec.resize(vectorSize);
-        // Record the reads and writes of bubble sort to csv
-        bubbleSort(bookDataVec, bubbleReads, bubbleWrites);
+        // Record the reads and writes of bubble sort to csv.
+        bubbleSort(bookDataVec, reads, writes);
         while(title < 1){
-            bubbleSortFile << "Reads" << "," << "Writes" << endl;
+            bubbleSortFile << "Vector Size" << "," << "Reads" << "," << "Writes" << endl;
             ++title;
         }
-        bubbleSortFile << bubbleReads << "," << bubbleWrites << endl;
-        // Record the reads and writes of selection sort to csv
-        selectionSort(bookDataVec, selectionReads, selectionWrites);
+        bubbleSortFile << vectorSize << "," << reads << "," << writes << endl;
+        // Record the reads and writes of bubble sort using a different comparable obj.
+        bubbleSortGetTitle(bookDataVec, reads, writes);
         while(title < 2){
-            selectionSortFile << "Reads" << "," << "Writes" << endl;
+            bubbleSortTwoSortFile << "Vector Size" << "," << "Reads" << "," << "Writes" << endl;
             ++title;
         }
-        selectionSortFile << selectionReads << "," << selectionWrites << endl;
-        // Record the reads and writes of stable selection sort to csv
-        selectionSortStable(bookDataVec, selectionReads, selectionWrites);
+        bubbleSortTwoSortFile << vectorSize << "," << reads << "," << writes << endl;
+        // Record the reads and writes of selection sort to csv.
+        selectionSort(bookDataVec, reads, writes);
         while(title < 3){
-            selectionSortStableFile << "Reads" << "," << "Writes" << endl;
+            selectionSortFile << "Vector Size" << "," << "Reads" << "," << "Writes" << endl;
             ++title;
         }
-        selectionSortStableFile << stableSelectionReads << "," << stableSelectionWrites << endl;
-        // Record the reads and writes of quick sort to csv
+        selectionSortFile << vectorSize << "," << reads << "," << writes << endl;
+        // Record the reads and writes of quick sort to csv.
         quickSortUnstable(bookDataVec, quickReads, quickWrites);
         while(title < 4){
-            quickSortFile << "Reads" << "," << "Writes" << endl;
+            quickSortFile << "Vector Size" << "," << "Reads" << "," << "Writes" << endl;
             ++title;
         }
-        quickSortFile << quickReads << "," << quickWrites << endl;
+        quickSortFile << vectorSize << "," <<  quickReads << "," << quickWrites << endl;
         // Record the reads and writes of heap sort to csv
-        heapSort(bookDataVec, heapReads, heapWrites);
+        heapSort(bookDataVec, reads, writes);
         while(title < 5){
-            heapSortFile << "Reads" << "," << "Writes" << endl;
+            heapSortFile << "Vector Size" << "," << "Reads" << "," << "Writes" << endl;
             ++title;
         }
-        heapSortFile << heapReads << "," << heapWrites << endl;
+        heapSortFile << vectorSize << "," << reads << "," << writes << endl;
     }
+    // Close all files.
     bubbleSortFile.close();
+    bubbleSortTwoSortFile.close();
     selectionSortFile.close();
-    selectionSortStableFile.close();
     quickSortFile.close();
     heapSortFile.close();
 
@@ -110,75 +91,69 @@ int main() {
      * except double the size of the data set each time
      * (instead of having it grow linearly)."
      */
-
-    int bubbleReadDouble = 0; // count the number of reads in each sorting algo
-    int bubbleWriteDouble = 0; // count the number of writes in each sorting algo
-    int selectionReadDouble = 0;
-    int selectionWriteDouble = 0;
-    int stableSelectionReadDouble = 0;
-    int stableSelectionWriteDouble = 0;
+    // Ints for counting the reads and writes of each sorting algorithm.
+    int readDouble = 0;
+    int writeDouble = 0;
+    // Use different ints for recursive sorting algorithm.
     int quickReadDouble = 0;
     int quickWriteDouble = 0;
-    int heapReadDouble = 0;
-    int heapWriteDouble = 0;
-    int titleDouble = 0; // used to put the row title at top of csv
+    // Title int used to put the title at top of each csv.
+    int titleDouble = 0;
     // Create files to store the number of reads and writes.
     ofstream bubbleSortFileDouble;
     bubbleSortFileDouble.open("bubbleSortFileDouble.csv");
+    ofstream bubbleSortTwoSortFileDouble;
+    bubbleSortTwoSortFileDouble.open("bubbleSortTwoSortFileDouble.csv");
     ofstream selectionSortFileDouble;
     selectionSortFileDouble.open("selectionSortFileDouble.csv");
-    ofstream selectionSortStableFileDouble;
-    selectionSortStableFileDouble.open("selectionSortStableFileDouble.csv");
     ofstream quickSortFileDouble;
     quickSortFileDouble.open("quickSortFileDouble.csv");
     ofstream heapSortFileDouble;
     heapSortFileDouble.open("heapSortFileDouble.csv");
-    // Record the number of reads and writes needed to sort a vector that doubles in size.  starting at two and going to 100.
-    for(int vectorSizeDouble = 2; vectorSizeDouble <= 100; vectorSizeDouble+=vectorSizeDouble) {
-        // Create a bookData vector and load books info
-        vector<bookData> bookDataVec;
-        loadFromFile("../books.csv", bookDataVec);
+    // Record the number of reads and writes needed to sort a vector that doubles in size.  Vector doubles 10 times.
+    for(int vectorSizeDouble = 2; vectorSizeDouble <= 1500; vectorSizeDouble+=vectorSizeDouble) {
         bookDataVec.resize(vectorSizeDouble);
-
-        // Record the reads and writes of bubble sort to csv
-        bubbleSort(bookDataVec, bubbleReadDouble, bubbleWriteDouble);
+        // Record the reads and writes of the bubble sort double to csv
+        bubbleSort(bookDataVec, readDouble, writeDouble);
         while(titleDouble < 1){
-            bubbleSortFileDouble << "Reads" << "," << "Writes" << endl;
+            bubbleSortFileDouble << "Vector Size" << "," << "Reads" << "," << "Writes" << endl;
             ++titleDouble;
         }
-        bubbleSortFile << bubbleReadDouble << "," << bubbleWriteDouble << endl;
-        // Record the reads and writes of selection sort to csv
-        selectionSort(bookDataVec, selectionReadDouble, selectionWriteDouble);
+        bubbleSortFileDouble << vectorSizeDouble << "," << readDouble << "," << writeDouble << endl;
+        // Record the reads and writes bubble sort double on a different field to csv
+        bubbleSortGetTitle(bookDataVec, readDouble, writeDouble);
         while(titleDouble < 2){
-            selectionSortFileDouble << "Reads" << "," << "Writes" << endl;
+            bubbleSortTwoSortFileDouble << "Vector Size" << "," << "Reads" << "," << "Writes" << endl;
             ++titleDouble;
         }
-        selectionSortFileDouble << selectionReadDouble << "," << selectionWriteDouble << endl;
-        // Record the reads and writes of stable selection sort to csv
-        selectionSortStable(bookDataVec, stableSelectionReadDouble, stableSelectionWriteDouble);
+        bubbleSortTwoSortFileDouble << vectorSizeDouble << "," << readDouble << "," << writeDouble << endl;
+
+        // Record the reads and writes of a selection sort
+        selectionSort(bookDataVec, readDouble, writeDouble);
         while(titleDouble < 3){
-            selectionSortStableFileDouble << "Reads" << "," << "Writes" << endl;
+            selectionSortFileDouble << "Vector Size" << "," << "Reads" << "," << "Writes" << endl;
             ++titleDouble;
         }
-        selectionSortStableFileDouble << stableSelectionReadDouble << "," << stableSelectionWriteDouble << endl;
+        selectionSortFileDouble << vectorSizeDouble << "," << readDouble << "," << writeDouble << endl;
         // Record the reads and writes of quick sort to csv
         quickSortUnstable(bookDataVec, quickReadDouble, quickWriteDouble);
         while(titleDouble < 4){
-            quickSortFileDouble << "Reads" << "," << "Writes" << endl;
+            quickSortFileDouble << "Vector Size" << "," << "Reads" << "," << "Writes" << endl;
             ++titleDouble;
         }
-        quickSortFileDouble << quickReadDouble << "," << quickWriteDouble << endl;
+        quickSortFileDouble << vectorSizeDouble << "," << quickReadDouble << "," << quickReadDouble << endl;
         // Record the reads and writes of heap sort to csv
-        heapSort(bookDataVec, heapReadDouble, heapWriteDouble);
+        heapSort(bookDataVec, readDouble, writeDouble);
         while(titleDouble < 5){
-            heapSortFileDouble << "Reads" << "," << "Writes" << endl;
+            heapSortFileDouble << "Vector Size" << "," << "Reads" << "," << "Writes" << endl;
             ++titleDouble;
         }
-        heapSortFileDouble << heapReadDouble << "," << heapWriteDouble << endl;
+        heapSortFileDouble << vectorSizeDouble << "," << readDouble << "," << writeDouble << endl;
     }
+    // Close all files.
     bubbleSortFileDouble.close();
     selectionSortFileDouble.close();
-    selectionSortStableFileDouble.close();
+    bubbleSortTwoSortFile.close();
     quickSortFileDouble.close();
     heapSortFileDouble.close();
     return 0;

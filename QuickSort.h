@@ -5,17 +5,6 @@
 #include <vector>
 using namespace std;
 
-template<typename Comparable>
-void printVec(const vector<Comparable> &v) {
-    for (int i = 0; i < v.size(); ++i) {
-        if (i != 0) {
-            cout << ", ";
-        }
-        cout << v[i];
-    }
-    cout << endl;
-}
-
 // Helper function for heapSort
 inline int leftChild(int i) {
     return 2 * i + 1;
@@ -25,32 +14,41 @@ inline int leftChild(int i) {
 // i is the index of the value being percolated down
 // n is the number of items in the heap
 template <typename Comparable>
-void percolateDown(vector<Comparable> &items, int i, int n, int child, Comparable tmp) {
+void percolateDown(vector<Comparable> &items, int i, int n, int child, Comparable tmp, int &heapReads, int & heapWrites) {
+    ++heapWrites; // Writes to tmp
+    ++heapReads; // Reads from items
     for(tmp = items[i]; leftChild(i) < n; i = child) {
         child = leftChild(i);
         // choose the child with the larger value
+        heapReads = 2 + heapReads; // Reads items[child] and items[child + 1]
         if (child != n - 1 && items[child] < items[child + 1]) {
             ++child;
         }
+        heapReads = 2 + heapReads; // reads items[child] and tmp
         // if the parent is less than the child, swap them
         if (tmp < items[child]) {
+            ++heapReads; // reads items[child]
+            ++ heapWrites; // writes to items[i]
             items[i] = items[child];
         } else {
             // parent is >= both children. nothing more to do.
             break;
         }
     }
+    ++heapReads; // reads tmp
+    ++heapWrites; // writes to items[i]
     items[i] = tmp;
 }
 
 template <typename Comparable>
 vector<Comparable> heapSort(vector<Comparable> items, int &heapReads, int &heapWrites) {
-
+    heapReads = 0;
+    heapWrites = 0;
     int i, j, child = 0;
     Comparable temp, tmp;
 
     for (i = items.size() / 2 - 1; i >= 0; --i) {
-        percolateDown(items, i, items.size(), child, tmp);
+        percolateDown(items, i, items.size(), child, tmp , heapReads , heapWrites);
     }
     // keep deleting the max
 
@@ -63,7 +61,7 @@ vector<Comparable> heapSort(vector<Comparable> items, int &heapReads, int &heapW
         items[j] = temp;
 
         // make it into a heap again
-        percolateDown(items, 0, j, child, tmp);
+        percolateDown(items, 0, j, child, tmp, heapReads, heapWrites);
     }
     return items;
 
@@ -71,6 +69,8 @@ vector<Comparable> heapSort(vector<Comparable> items, int &heapReads, int &heapW
 
 template<typename Comparable>
 void bubbleSort(vector<Comparable> vec, int &bubbleReads, int &bubbleWrites) {
+    bubbleReads = 0;
+    bubbleWrites = 0;
     bool haveSwapped = true;
 
     int maxIndex = vec.size(), i;
@@ -93,9 +93,36 @@ void bubbleSort(vector<Comparable> vec, int &bubbleReads, int &bubbleWrites) {
         --maxIndex;
     }
 }
-
+// Two sort bubble sort
+template<typename Comparable>
+void bubbleSortGetTitle(vector<Comparable> vec, int &bubbleReadsDifferentField, int &bubbleWritesDifferentField) {
+    bubbleReadsDifferentField = 0;
+    bubbleWritesDifferentField = 0;
+    bool haveSwapped = true;
+    int maxIndex = vec.size();
+    while (haveSwapped) {
+        haveSwapped = false;
+        for (int i = 0; i + 1 < maxIndex; ++i) {
+            // Compare items at indices i and i+1 and swap if necessary
+            bubbleReadsDifferentField = 2 + bubbleReadsDifferentField;
+            if (vec[i].getTitle() > vec[i+1].getTitle()) {
+                bubbleReadsDifferentField = 3 + bubbleReadsDifferentField;
+                bubbleWritesDifferentField = 3 + bubbleWritesDifferentField;
+                Comparable temp = vec[i];
+                vec[i] = vec[i+1];
+                vec[i+1] = temp;
+                // Update haveSwapped
+                haveSwapped = true;
+            }
+        }
+        // Update maxIndex
+        --maxIndex;
+    }
+}
 template<typename Comparable>
 void selectionSort(vector<Comparable> vec, int &selectionSortReads, int &selectionSortWrites) {
+    selectionSortReads = 0;
+    selectionSortWrites = 0;
     int swapIndex, i, minIndex;
     Comparable temp;
     for (swapIndex = 0; swapIndex < vec.size() - 1; ++swapIndex) {
@@ -110,29 +137,6 @@ void selectionSort(vector<Comparable> vec, int &selectionSortReads, int &selecti
         selectionSortReads = selectionSortReads + 3; // reads vec[swapIndex], vec[minIndex], temp
         selectionSortWrites = selectionSortWrites + 3; // reads temp, vec[swapIndex], vec[minIndex]
         // Swap min value into swapIndex spot in vector
-        temp = vec[swapIndex];
-        vec[swapIndex] = vec[minIndex];
-        vec[minIndex] = temp;
-    }
-}
-
-// stable selection sort
-template<typename Comparable>
-void selectionSortStable(vector<Comparable> vec, int &stableSelectionSortReads, int &stableSelectionSortWrites) {
-    int swapIndex, i, minIndex;
-    Comparable temp;
-    for (swapIndex = 0; swapIndex < vec.size() - 1; ++swapIndex) {
-        // Loop through vector starting at swapIndex and keep track of min
-        minIndex = swapIndex;
-        for (i = swapIndex + 1; i < vec.size(); ++i) {
-            stableSelectionSortReads = 2 + stableSelectionSortReads; // reads vec[i] and vec[minIndex]
-            if (vec[i].getTitle() < vec[minIndex].getTitle()) { // Compares the getTitle field instead of bookID.
-                minIndex = i;
-            }
-        }
-        // Swap min value into swapIndex spot in vector
-        stableSelectionSortReads = 3 + stableSelectionSortReads; // read vec[swapIndex], vec[minIndex], temp.
-        stableSelectionSortWrites = 3 + stableSelectionSortWrites; // write temp, vec[swapIndex], vec[minIndex].
         temp = vec[swapIndex];
         vec[swapIndex] = vec[minIndex];
         vec[minIndex] = temp;
@@ -181,43 +185,4 @@ void quickSortUnstable(vector<Comparable> vec, int &quickReads, int &quickWrite)
     quickSortUnstableRec(vec, 0, vec.size() - 1, quickReads, quickWrite);
 }
 
-// Selection sort for two sort comparison.
-template<typename Comparable>
-void selectionSortTwoSort(vector<Comparable> vec) {
 
-    int swapIndex, i, minIndex;
-    Comparable temp;
-    for (swapIndex = 0; swapIndex < vec.size() - 1; ++swapIndex) {
-        // Loop through vector starting at swapIndex and keep track of min
-        minIndex = swapIndex;
-        for (i = swapIndex + 1; i < vec.size(); ++i) {
-            if (vec[i] < vec[minIndex]) {
-                minIndex = i;
-            }
-        }
-        // Swap min value into swapIndex spot in vector
-        temp = vec[swapIndex];
-        vec[swapIndex] = vec[minIndex];
-        vec[minIndex] = temp;
-    }
-}
-
-// Stable selection sort for getTitle field.
-template<typename Comparable>
-void selectionSortStableTwoSort(vector<Comparable> vec) {
-    int swapIndex, i, minIndex;
-    Comparable temp;
-    for (swapIndex = 0; swapIndex < vec.size() - 1; ++swapIndex) {
-        // Loop through vector starting at swapIndex and keep track of min
-        minIndex = swapIndex;
-        for (i = swapIndex + 1; i < vec.size(); ++i) {
-            if (vec[i].getTitle() < vec[minIndex].getTitle()) { // Compares the getTitle field instead of bookID.
-                minIndex = i;
-            }
-        }
-        // Swap min value into swapIndex spot in vector
-        temp = vec[swapIndex];
-        vec[swapIndex] = vec[minIndex];
-        vec[minIndex] = temp;
-    }
-}

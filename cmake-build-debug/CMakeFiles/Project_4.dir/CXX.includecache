@@ -6,11 +6,11 @@
 
 #IncludeRegexTransform: 
 
-C:/Users/amccm/OneDrive - University of Vermont/CS124/Project4.0/QuickSort.h
+C:/Users/amccm/CLionProjects/Project_4/QuickSort.h
 cmath
 -
 bookData.h
-C:/Users/amccm/OneDrive - University of Vermont/CS124/Project4.0/bookData.h
+C:/Users/amccm/CLionProjects/Project_4/bookData.h
 iostream
 -
 fstream
@@ -18,7 +18,7 @@ fstream
 vector
 -
 
-C:/Users/amccm/OneDrive - University of Vermont/CS124/Project4.0/bookData.h
+C:/Users/amccm/CLionProjects/Project_4/bookData.h
 fstream
 -
 iomanip
@@ -30,18 +30,20 @@ string
 vector
 -
 
-C:/Users/amccm/OneDrive - University of Vermont/CS124/Project4.0/main.cpp
+C:/Users/amccm/CLionProjects/Project_4/main.cpp
 iostream
 -
 QuickSort.h
-C:/Users/amccm/OneDrive - University of Vermont/CS124/Project4.0/QuickSort.h
+C:/Users/amccm/CLionProjects/Project_4/QuickSort.h
 bookData.h
-C:/Users/amccm/OneDrive - University of Vermont/CS124/Project4.0/bookData.h
+C:/Users/amccm/CLionProjects/Project_4/bookData.h
 vector
 -
 random
 -
 string
+-
+algorithm
 -
 cstdio
 -
