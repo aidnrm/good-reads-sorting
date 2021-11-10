@@ -10,8 +10,6 @@
 #include <random>
 #include <string>
 #include <algorithm>
-#include <cstdio> // used for the timer
-#include <ctime> // used for the timer
 using namespace std;
 using std::to_string;
 int main() {
@@ -40,10 +38,9 @@ int main() {
     // Create a bookData vector and load books info
     vector<bookData> bookDataVec;
     loadFromFile("../books.csv", bookDataVec);
-    // Shuffle vector for better data, since my comparable obj is ordered from least to greatest.
+    // Shuffle vector for better data, since my comparable is ordered from least to greatest.
     random_shuffle(bookDataVec.begin(), bookDataVec.end());
     // Record the number of reads and writes needed to sort a vector of size 100, 200, 300, 400, 500, 600, 700, 800, 900, and 1000
-    // TODO: Change for loop to go from 1000 to 100.
     for(vectorSize; vectorSize >= 100; vectorSize-=100) {
         bookDataVec.resize(vectorSize);
         // Record the reads and writes of bubble sort to csv.
@@ -68,6 +65,8 @@ int main() {
         }
         selectionSortFile << vectorSize << "," << reads << "," << writes << endl;
         // Record the reads and writes of quick sort to csv.
+        quickReads = 0;
+        quickWrites = 0;
         quickSortUnstable(bookDataVec, quickReads, quickWrites);
         while(title < 4){
             quickSortFile << "Vector Size" << "," << "Reads" << "," << "Writes" << endl;
@@ -114,7 +113,8 @@ int main() {
     ofstream heapSortFileDouble;
     heapSortFileDouble.open("heapSortFileDouble.csv");
     // Record the number of reads and writes needed to sort a vector that doubles in size.  Vector doubles 10 times.
-    for(int vectorSizeDouble = 2; vectorSizeDouble <= 1500; vectorSizeDouble+=vectorSizeDouble) {
+    int vectorSizeDouble = 1024;
+    for(vectorSizeDouble; vectorSizeDouble >= 2; vectorSizeDouble = vectorSizeDouble/2) {
         bookDataVec.resize(vectorSizeDouble);
         // Record the reads and writes of the bubble sort double to csv
         bubbleSort(bookDataVec, readDouble, writeDouble);
@@ -139,12 +139,14 @@ int main() {
         }
         selectionSortFileDouble << vectorSizeDouble << "," << readDouble << "," << writeDouble << endl;
         // Record the reads and writes of quick sort to csv
+        quickReadDouble = 0;
+        quickWriteDouble = 0;
         quickSortUnstable(bookDataVec, quickReadDouble, quickWriteDouble);
         while(titleDouble < 4){
             quickSortFileDouble << "Vector Size" << "," << "Reads" << "," << "Writes" << endl;
             ++titleDouble;
         }
-        quickSortFileDouble << vectorSizeDouble << "," << quickReadDouble << "," << quickReadDouble << endl;
+        quickSortFileDouble << vectorSizeDouble << "," << quickReadDouble << "," << quickWriteDouble << endl;
         // Record the reads and writes of heap sort to csv
         heapSort(bookDataVec, readDouble, writeDouble);
         while(titleDouble < 5){
