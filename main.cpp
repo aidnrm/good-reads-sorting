@@ -10,8 +10,6 @@
 #include <random>
 #include <string>
 #include <algorithm>
-#include <cstdio> // used for the timer
-#include <ctime> // used for the timer
 using namespace std;
 using std::to_string;
 int main() {
@@ -40,7 +38,7 @@ int main() {
     // Create a bookData vector and load books info
     vector<bookData> bookDataVec;
     loadFromFile("../books.csv", bookDataVec);
-    // Shuffle vector for better data, since my comparable obj is ordered from least to greatest.
+    // Shuffle vector for better data, since my comparable is ordered from least to greatest.
     random_shuffle(bookDataVec.begin(), bookDataVec.end());
     // Record the number of reads and writes needed to sort a vector of size 100, 200, 300, 400, 500, 600, 700, 800, 900, and 1000
     for(vectorSize; vectorSize >= 100; vectorSize-=100) {
